@@ -67,7 +67,8 @@ cd backend
 
 ### 2️⃣ **Install Dependencies**  
 ```bash
-npm install
+npm init -y
+npm ci
 ```
 
 ### 3️⃣ **Start the Server**  
