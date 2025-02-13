@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Details Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 400px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hidden {
+            transform: scale(0.9);
+            opacity: 0;
+            display: none;
+        }
+
+        .visible {
+            transform: scale(1);
+            opacity: 1;
+            display: block;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .details {
+            margin-top: 1rem;
+        }
+
+        .details p {
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .details span {
+            color: #666;
+        }
+
+        .buttons {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .button {
+            padding: 0.7rem;
+            background: #3498db;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-5px);
+        }
+
+        .go-back {
+            background: #e74c3c;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container visible" id="inputContainer">
+        <h2>Enter Vehicle Plate Number</h2>
+        <form id="plateForm">
+            <div class="form-group">
+                <label for="plateNumber">Plate Number</label>
+                <input type="text" id="plateNumber" name="plateNumber" placeholder="Enter Plate Number" required>
+            </div>
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
+
+    <div class="container hidden" id="detailsContainer">
+        <h2>Vehicle Details</h2>
+        <div class="details">
+            <p>Plate Number: <span id="detailPlateNumber"></span></p>
+            <p>Manufacturer: <span id="detailManufacturer"></span></p>
+            <p>Model: <span id="detailModel"></span></p>
+            <p>Year: <span id="detailYear"></span></p>
+            <p>Vehicle Type: <span id="detailType"></span></p>
+            <p>Permit: <span id="detailPermit"></span></p>
+            <p>Registration Date: <span id="detailRegDate"></span></p>
+            <p>Registration Expiry: <span id="detailRegExpiry"></span></p>
+            <p>Current Owner: <span id="detailOwner"></span></p>
+            <p>Status: <span id="detailStatus"></span></p>
+        </div>
+        <div class="buttons">
+            <div class="button-group">
+                <button class="button">Get Owner Details</button>
+                <button class="button">Add Toll Record</button>
+                <button class="button">Add Violation Details</button>
+                <button class="button">Get Insurance Details</button>
+            </div>
+            <button class="button go-back" onclick="goBack()">Go Back</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('plateForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const plateNumber = document.getElementById('plateNumber').value;
+
+            fetch(`http://localhost:3000/api/v1/vehicles/${plateNumber}`)
+            .then(response => response.json())
+            .then(result => {
+                if(!result.success) {
+                    console.log('Error : '+result.message)
+                    window.document.body.innerHTML = error.message
+                    throw new Error('Error')
+                }
+                
+                document.getElementById('detailPlateNumber').innerText = result.data.platenumber
+                document.getElementById('detailManufacturer').innerText = result.data.manufacturer
+                document.getElementById('detailModel').innerText = result.data.model
+                document.getElementById('detailYear').innerText = result.data.year
+                document.getElementById('detailType').innerText = result.data.vehicleType
+                document.getElementById('detailPermit').innerText = result.data.permit
+                document.getElementById('detailRegDate').innerText = result.data.registrationDate
+                document.getElementById('detailRegExpiry').innerText = result.data.registrationExpiry
+                document.getElementById('detailOwner').innerText = result.data.currentOwner
+                document.getElementById('detailStatus').innerText = result.data.status
+
+                document.getElementById('inputContainer').classList.replace('visible', 'hidden');
+                document.getElementById('detailsContainer').classList.replace('hidden', 'visible');
+            })
+
+        });
+
+        function goBack() {
+            document.getElementById('detailsContainer').classList.replace('visible', 'hidden');
+            document.getElementById('inputContainer').classList.replace('hidden', 'visible');
+        }
+    </script>
+
+</body>
+</html>

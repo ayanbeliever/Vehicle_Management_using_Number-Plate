@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Details Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 400px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hidden {
+            transform: scale(0.9);
+            opacity: 0;
+            display: none;
+        }
+
+        .visible {
+            transform: scale(1);
+            opacity: 1;
+            display: block;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .details {
+            margin-top: 1rem;
+        }
+
+        .details p {
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .details span {
+            color: #666;
+        }
+
+        .buttons {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .button {
+            padding: 0.7rem;
+            background: #3498db;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .go-back {
+            background: #e74c3c;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .status-success {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .status-failed {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Initial Plate Number Input -->
+    <div class="container visible" id="inputContainer">
+        <h2>Enter Vehicle Plate Number</h2>
+        <form id="plateForm">
+            <div class="form-group">
+                <label for="plateNumber">Plate Number</label>
+                <input type="text" id="plateNumber" name="plateNumber" placeholder="Enter Plate Number" required>
+            </div>
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
+
+    <!-- Vehicle Details Container -->
+    <div class="container hidden" id="detailsContainer">
+        <h2>Vehicle Details</h2>
+        <div class="details">
+            <p>Plate Number: <span id="detailPlateNumber"></span></p>
+            <p>Manufacturer: <span id="detailManufacturer"></span></p>
+            <p>Model: <span id="detailModel"></span></p>
+            <p>Year: <span id="detailYear"></span></p>
+            <p>Vehicle Type: <span id="detailType"></span></p>
+            <p>Permit: <span id="detailPermit"></span></p>
+            <p>Registration Date: <span id="detailRegDate"></span></p>
+            <p>Registration Expiry: <span id="detailRegExpiry"></span></p>
+            <p>Current Owner: <span id="detailOwner"></span></p>
+            <p>Status: <span id="detailStatus"></span></p>
+        </div>
+        <div class="buttons">
+            <div class="button-group">
+                <button class="button" onclick="showOwnerDetails()">Get Owner Details</button>
+                <button class="button" onclick="showTollForm()">Add Toll Record</button>
+                <button class="button" onclick="showViolationForm()">Add Violation Details</button>
+                <button class="button" onclick="showInsuranceDetails()">Get Insurance Details</button>
+            </div>
+            <button class="button go-back" onclick="goBack()">Go Back</button>
+        </div>
+    </div>
+
+    <!-- Owner Details Container -->
+    <div class="container hidden" id="ownerDetailsContainer">
+        <h2>Owner Details</h2>
+        <div class="details" id="ownerDetails">
+            <!-- Owner details will be populated here -->
+        </div>
+        <div class="buttons">
+            <button class="button go-back" onclick="hideContainer('ownerDetailsContainer', 'detailsContainer')">Back</button>
+        </div>
+    </div>
+
+    <!-- Toll Record Form -->
+    <div class="container hidden" id="tollFormContainer">
+        <h2>Add Toll Record</h2>
+        <form id="tollForm">
+            <div class="form-group">
+                <label for="tollBoothId">Toll Booth ID</label>
+                <input type="text" id="tollBoothId" required>
+            </div>
+            <div class="form-group">
+                <label for="passageTime">Passage Time</label>
+                <input type="datetime-local" id="passageTime" required>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount</label>
+                <input type="number" id="amount" required>
+            </div>
+            <div class="form-group">
+                <label for="paymentStatus">Payment Status</label>
+                <select id="paymentStatus" required>
+                    <option value="PAID">PAID</option>
+                    <option value="PENDING">PENDING</option>
+                    <option value="FAILED">FAILED</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="paymentMethod">Payment Method</label>
+                <input type="text" id="paymentMethod" required>
+            </div>
+            <div class="buttons">
+                <button type="submit" class="button">Submit</button>
+                <button type="button" class="button go-back" onclick="hideContainer('tollFormContainer', 'detailsContainer')">Back</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Violation Form -->
+    <div class="container hidden" id="violationFormContainer">
+        <h2>Add Violation Details</h2>
+        <form id="violationForm">
+            <div class="form-group">
+                <label for="violationType">Violation Type</label>
+                <select id="violationType">
+                    <option value="SPEEDING" id="violationType">SPEEDING</option>
+                    <option value="PARKING" id="violationType">PARKING</option>
+                    <option value="SIGNAL" id="violationType">SIGNAL</option>
+                    <option value="DOCUMENTS" id="violationType">DOCUMENTS</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="violationDate">Date</label>
+                <input type="datetime-local" id="violationDate" required>
+            </div>
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" required>
+            </div>
+            <div class="form-group">
+                <label for="fineAmount">Fine Amount</label>
+                <input type="number" id="fineAmount" required>
+            </div>
+            <div class="form-group">
+                <label for="violationStatus">Status</label>
+                <select id="violationStatus" required>
+                    <option value="PENDING">PENDING</option>
+                    <option value="PAID">PAID</option>
+                    <option value="DISPUTED">DISPUTED</option>
+                </select>
+            </div>
+            <div class="buttons">
+                <button type="submit" class="button">Submit</button>
+                <button type="button" class="button go-back" onclick="hideContainer('violationFormContainer', 'detailsContainer')">Back</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Insurance Details Container -->
+    <div class="container hidden" id="insuranceDetailsContainer">
+        <h2>Insurance Details</h2>
+        <div class="details" id="insuranceDetails">
+            <!-- Insurance details will be populated here -->
+        </div>
+        <div class="buttons">
+            <button class="button go-back" onclick="hideContainer('insuranceDetailsContainer', 'detailsContainer')">Back</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPlateNumber = '';
+        let licenseNumber = '';
+
+        document.getElementById('plateForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            currentPlateNumber = document.getElementById('plateNumber').value;
+
+            fetch(`http://localhost:3000/api/v1/vehicles/${currentPlateNumber}`)
+                .then(response => response.json())
+                .then(result => {
+                    if(!result.success) {
+                        throw new Error(result.message);
+                    }
+                    
+                    document.getElementById('detailPlateNumber').innerText = result.data.platenumber;
+                    document.getElementById('detailManufacturer').innerText = result.data.manufacturer;
+                    document.getElementById('detailModel').innerText = result.data.model;
+                    document.getElementById('detailYear').innerText = result.data.year;
+                    document.getElementById('detailType').innerText = result.data.vehicleType;
+                    document.getElementById('detailPermit').innerText = result.data.permit;
+                    document.getElementById('detailRegDate').innerText = result.data.registrationDate;
+                    document.getElementById('detailRegExpiry').innerText = result.data.registrationExpiry;
+                    document.getElementById('detailOwner').innerText = result.data.currentOwner;
+                    document.getElementById('detailStatus').innerText = result.data.status;
+
+                    licenseNumber = document.getElementById('detailOwner').innerText
+                    hideContainer('inputContainer', 'detailsContainer');
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        });
+
+        function showOwnerDetails() {
+            console.log(licenseNumber)
+            fetch(`http://localhost:3000/api/v1/vehicles/own/${licenseNumber}`)
+                .then(response => response.json())
+                .then(result => {
+                    if(!result.success) {
+                        throw new Error(result.message);
+                    }
+                    
+                    // const ownerDetailsHtml = Object.entries(result.data)
+                    //     .map(([key, value]) => `<p>${key}: <span>${value}</span></p>`)
+                    //     .join('');
+
+                    const ownerDetailsHtml = `
+                        <p>Name: <span>${result.data.name}</span></p>
+                        <p>License Number: <span>${result.data.licenseNumber}</span></p>
+                        <p>Phone: <span>${result.data.phone}</span></p>
+                        <p>Email: <span>${result.data.email}</span></p>
+                        <p>DOB: <span>${result.data.dateOfBirth}</span></p>
+                        <p>Address: <span>${result.data.address}</span></p>
+                    `
+                    
+                    document.getElementById('ownerDetails').innerHTML = ownerDetailsHtml;
+                    hideContainer('detailsContainer', 'ownerDetailsContainer');
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        }
+
+        document.getElementById('tollForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const tollData = {
+                vehicle: currentPlateNumber,
+                tollBoothId: document.getElementById('tollBoothId').value,
+                passageTime: document.getElementById('passageTime').value,
+                amount: document.getElementById('amount').value,
+                paymentStatus: document.getElementById('paymentStatus').value,
+                paymentMethod: document.getElementById('paymentMethod').value
+            };
+
+            fetch('http://localhost:3000/api/v1/tollrecords', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(tollData)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if(!result.success) {
+                        throw new Error(result.message);
+                    }
+                    alert('Toll record added successfully');
+                    hideContainer('tollFormContainer', 'detailsContainer');
+                    this.reset();
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        });
+
+        document.getElementById('violationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const violationData = {
+                vehicle: currentPlateNumber,
+                violationType: document.getElementById('violationType').value,
+                date: document.getElementById('violationDate').value,
+                location: document.getElementById('location').value,
+                fineAmount: document.getElementById('fineAmount').value,
+                status: document.getElementById('violationStatus').value
+            };
+
+            fetch('http://localhost:3000/api/v1/violations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(violationData)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if(!result.success) {
+                        throw new Error(result.message);
+                    }
+                    alert('Violation record added successfully');
+                    hideContainer('violationFormContainer', 'detailsContainer');
+                    this.reset();
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        });
+
+        function showInsuranceDetails() {
+            fetch(`http://localhost:3000/api/v1/vehicles/ins/${currentPlateNumber}`)
+                .then(response => response.json())
+                .then(result => {
+                    if(!result.success) {
+                        throw new Error(result.message);
+                    }
+                    
+                    // const insuranceDetailsHtml = Object.entries(result.data)
+                    //     .map(([key, value]) => `<p>${key}: <span>${value}</span></p>`)
+                    //     .join('');
+
+                    const insuranceDetailsHtml = `
+                        <p>Vehicle:  <span>${result.data.vehicle}</span></p>
+                        <p>Policy Number:  <span>${result.data.policyNumber}</span></p>
+                        <p>Provider:  <span>${result.data.provider}</span></p>
+                        <p>Type:  <span>${result.data.type}</span></p>
+                        <p>Start Date:  <span>${result.data.startDate}</span></p>
+                        <p>End Date:  <span>${result.data.endDate}</span></p>
+                        <p>Status:  <span>${result.data.status}</span></p>
+                    `
+                    
+                    document.getElementById('insuranceDetails').innerHTML = insuranceDetailsHtml;
+                    hideContainer('detailsContainer', 'insuranceDetailsContainer');
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        }
+
+        function showTollForm() {
+            hideContainer('detailsContainer', 'tollFormContainer');
+        }
+
+        function showViolationForm() {
+            hideContainer('detailsContainer', 'violationFormContainer');
+        }
+
+        function hideContainer(hideId, showId) {
+            document.getElementById(hideId).classList.replace('visible', 'hidden');
+            document.getElementById(showId).classList.replace('hidden', 'visible');
+        }
+
+        function goBack() {
+            currentPlateNumber = '';
+            document.getElementById('plateForm').reset();
+            hideContainer('detailsContainer', 'inputContainer');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Details Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 400px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .vehicles-container {
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .hidden {
+            transform: scale(0.9);
+            opacity: 0;
+            display: none;
+        }
+
+        .visible {
+            transform: scale(1);
+            opacity: 1;
+            display: block;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .details {
+            margin-top: 1rem;
+        }
+
+        .details p {
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .details span {
+            color: #666;
+        }
+
+        .buttons {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .button {
+            padding: 0.7rem;
+            background: #3498db;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+        }
+
+        .go-back {
+            background: #e74c3c;
+        }
+
+        /* Vehicle Cards Styling */
+        .vehicles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .vehicle-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .vehicle-header h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .vehicle-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+
+        .vehicle-info p {
+            margin: 0.5rem 0;
+        }
+
+        .vehicle-info .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .vehicle-info .value {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-expired {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .vehicles-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container visible" id="inputContainer">
+        <h2>Enter Owner License Number</h2>
+        <form id="licenseForm">
+            <div class="form-group">
+                <label for="licenseNumber">License Number</label>
+                <input type="text" id="licenseNumber" name="licenseNumber" required>
+            </div>
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
+
+    <div class="container hidden" id="detailsContainer">
+        <h2>Owner Details</h2>
+        <div class="details">
+            <p>Owner Name: <span id="detailOwnerName"></span></p>
+            <p>License Number: <span id="detailLicenseNumber"></span></p>
+            <p>Phone: <span id="detailPhone"></span></p>
+            <p>Email: <span id="detailEmail"></span></p>
+            <p>Date of Birth: <span id="detailDob"></span></p>
+            <p>Address: <span id="detailAddress"></span></p>
+        </div>
+        <div class="buttons">
+            <button class="button" onclick="showVehicles()">Get All Vehicles</button>
+            <button class="button go-back" onclick="goBack()">Go Back</button>
+        </div>
+    </div>
+
+    <div class="container vehicles-container hidden" id="vehiclesContainer">
+        <div class="vehicles-header">
+            <h2>Owner's Vehicles</h2>
+            <button class="button go-back" onclick="hideVehicles()">Back to Details</button>
+        </div>
+        <div class="vehicles-grid" id="vehiclesGrid">
+            <!-- Vehicle cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        let currentLicenseNumber = '';
+
+        document.getElementById('licenseForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            currentLicenseNumber = document.getElementById('licenseNumber').value;
+
+            fetch(`http://localhost:3000/api/v1/owners/${currentLicenseNumber}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (!result.success) {
+                        throw new Error(result.message);
+                    }
+                    
+                    document.getElementById('detailOwnerName').innerText = result.data.name;
+                    document.getElementById('detailLicenseNumber').innerText = result.data.licenseNumber;
+                    document.getElementById('detailPhone').innerText = result.data.phone;
+                    document.getElementById('detailEmail').innerText = result.data.email;
+                    document.getElementById('detailDob').innerText = result.data.dateOfBirth;
+                    document.getElementById('detailAddress').innerText = result.data.address;
+                    
+                    document.getElementById('inputContainer').classList.replace('visible', 'hidden');
+                    document.getElementById('detailsContainer').classList.replace('hidden', 'visible');
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        });
+
+        function showVehicles() {
+            fetch(`http://localhost:3000/api/v1/owners/veh/${currentLicenseNumber}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (!result.success) {
+                        throw new Error(result.message);
+                    }
+                    
+                    const vehiclesGrid = document.getElementById('vehiclesGrid');
+                    vehiclesGrid.innerHTML = ''; // Clear existing cards
+                    
+                    result.data.forEach(vehicle => {
+                        const card = createVehicleCard(vehicle);
+                        vehiclesGrid.appendChild(card);
+                    });
+                    
+                    document.getElementById('detailsContainer').classList.replace('visible', 'hidden');
+                    document.getElementById('vehiclesContainer').classList.replace('hidden', 'visible');
+                })
+                .catch(error => {
+                    alert('Error: ' + error.message);
+                });
+        }
+
+        function createVehicleCard(vehicle) {
+            const card = document.createElement('div');
+            card.className = 'vehicle-card';
+            
+            const statusClass = vehicle.status.toLowerCase() === 'active' ? 'status-active' : 'status-expired';
+            
+            card.innerHTML = `
+                <div class="vehicle-header">
+                    <h3>${vehicle.manufacturer} ${vehicle.model}</h3>
+                    <span class="status-badge ${statusClass}">${vehicle.status}</span>
+                </div>
+                <div class="vehicle-info">
+                    <p>
+                        <span class="label">Plate Number</span><br>
+                        <span class="value">${vehicle.platenumber}</span>
+                    </p>
+                    <p>
+                        <span class="label">Year</span><br>
+                        <span class="value">${vehicle.year}</span>
+                    </p>
+                    <p>
+                        <span class="label">Vehicle Type</span><br>
+                        <span class="value">${vehicle.vehicleType}</span>
+                    </p>
+                    <p>
+                        <span class="label">Permit</span><br>
+                        <span class="value">${vehicle.permit}</span>
+                    </p>
+                    <p>
+                        <span class="label">Registration Date</span><br>
+                        <span class="value">${vehicle.registrationDate}</span>
+                    </p>
+                    <p>
+                        <span class="label">Registration Expiry</span><br>
+                        <span class="value">${vehicle.registrationExpiry}</span>
+                    </p>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function hideVehicles() {
+            document.getElementById('vehiclesContainer').classList.replace('visible', 'hidden');
+            document.getElementById('detailsContainer').classList.replace('hidden', 'visible');
+        }
+
+        function goBack() {
+            currentLicenseNumber = '';
+            document.getElementById('licenseForm').reset();
+            document.getElementById('detailsContainer').classList.replace('visible', 'hidden');
+            document.getElementById('inputContainer').classList.replace('hidden', 'visible');
+        }
+    </script>
+</body>
+</html>

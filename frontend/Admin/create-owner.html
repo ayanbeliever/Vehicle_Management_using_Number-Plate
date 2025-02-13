@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Owner</title>
+    <style>
+        /* * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 0.7rem;
+            background: #3498db;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-5px);
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .message.success {
+            background: #e9f7ef;
+            color: #2ecc71;
+        }
+
+        .message.error {
+            background: #fdecea;
+            color: #e74c3c;
+        }
+
+        .message i {
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
+        } */
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    .container {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    h2 {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        color: #444;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.7rem;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        background: #f9f9f9;
+        transition: background 0.3s ease;
+    }
+
+    .form-group input:focus {
+        background: #fff;
+        outline: none;
+        border-color: #42a5f5;
+    }
+
+    .button {
+        width: 100%;
+        padding: 0.9rem;
+        background: #42a5f5;
+        border: none;
+        color: white;
+        border-radius: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .button:hover {
+        background: #1e88e5;
+        transform: translateY(-3px);
+    }
+
+    .message {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .message.success {
+        background: #e9f7ef;
+        color: #2ecc71;
+    }
+
+    .message.error {
+        background: #fdecea;
+        color: #e74c3c;
+    }
+
+    .message i {
+        font-size: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            width: 90%;
+        }
+    }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Create Owner</h2>
+        <form id="createOwnerForm">
+            <div class="form-group">
+                <label for="licenseNumber">License Number</label>
+                <input type="text" id="licenseNumber" name="licenseNumber" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" required>
+            </div>
+            <button type="submit" class="button">Create</button>
+        </form>
+        <div id="messageContainer"></div>
+    </div>
+
+    <script>
+        document.getElementById('createOwnerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const licenseNumber = document.getElementById('licenseNumber').value;
+            const name = document.getElementById('name').value;
+            const dateOfBirth = document.getElementById('dob').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const address = document.getElementById('address').value;
+
+            const data = {
+                licenseNumber: licenseNumber,
+                name: name,
+                dateOfBirth: dateOfBirth,
+                phone: phone,
+                email: email,
+                address: address
+            };
+
+            fetch('http://localhost:3000/api/v1/owners/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                if (data.success) {
+                    document.getElementById('messageContainer').innerHTML = `
+                        <div class="message success">
+                            <i>&#10004;</i>
+                            <span>Owner Registered Successfully</span>
+                        </div>
+                    `;
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage(error.message, 'error');
+            });
+        });
+
+        function showMessage(message, type) {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.innerHTML = `
+            <div class="message ${type}">
+                <i>${type === 'success' ? '&#10004;' : '&#10008;'}</i>
+                <span>${message}</span>
+            </div>
+            `;
+        }
+    </script>
+
+</body>
+</html>
